@@ -29,7 +29,7 @@ class LoginController extends Controller
         protected function sendFailedLoginResponse(\Illuminate\Http\Request $request)
     {
         throw \Illuminate\Validation\ValidationException::withMessages([
-            'password' => ['Password atau Fingerprint ID salah.'],
+            'password' => ['Password atau NIK salah.'],
         ]);
     }
 

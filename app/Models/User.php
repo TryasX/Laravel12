@@ -31,4 +31,10 @@ class User extends Authenticatable
     {
         return null;
     }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'FingerPrintID', 'FingerPrintID');
+    }
+
 }

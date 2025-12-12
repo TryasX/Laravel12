@@ -1,78 +1,65 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
-@section('title')
-    Halaman Login
-@endsection
+@section('title', 'Halaman Login')
 
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">{{ __('Login') }}</div>
+    {{-- <h2 class="text-2xl font-semibold text-center mb-6">Login</h2> --}}
 
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('login') }}">
-                            @csrf
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
 
-                            <div class="row mb-3">
-                                <label for="FingerprintID"
-                                    class="col-md-4 col-form-label text-md-end">Fingerprint ID</label>
+        {{-- FINGERPRINT ID --}}
+        <div class="mb-4">
+            <label for="FingerprintID" class="block text-gray-700 font-medium mb-1">
+                NIK
+            </label>
 
-                                <div class="col-md-6">
-                                    <input id="FingerprintID" type="text"
-                                        class="form-control @error('password') is-invalid @enderror"
-                                        name="FingerPrintID" value="{{ old('FingerPrintID') }}" required autofocus>
-                                        <span id="fp-error" class="text-danger small" style="display:none;"></span>
-                                    @error('FingerprintID')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
+            <input 
+                id="FingerprintID" 
+                name="FingerPrintID" 
+                type="text"
+                class="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-200 focus:border-indigo-500"
+                value="{{ old('FingerPrintID') }}" 
+                required 
+                maxlength="10"
+                oninput="validateNik()" 
+            >
 
-                            <div class="row mb-3">
-                                <label for="password"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                                <div class="col-md-6">
-                                    <input id="password" type="password"
-                                        class="form-control @error('password') is-invalid @enderror"
-                                        name="password" required autocomplete="current-password">
-
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6 offset-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="remember" id="remember"
-                                            {{ old('remember') ? 'checked' : '' }}>
-
-                                        <label class="form-check-label" for="remember">
-                                            {{ __('Remember Me') }}
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-0">
-                                <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Login') }}
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <span id="fp-error" class="text-red-600 text-sm hidden"></span>
         </div>
-    </div>
+
+
+        {{-- PASSWORD --}}
+        <div class="mb-4">
+            <label for="password" class="block text-gray-700 font-medium mb-1">
+                Password
+            </label>
+
+            <input id="password" name="password" type="password" required autocomplete="current-password"
+                class="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-200 focus:border-indigo-500">
+
+            @error('password')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- REMEMBER --}}
+        {{-- <div class="flex items-center mb-4">
+            <input type="checkbox" name="remember" id="remember"
+                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                {{ old('remember') ? 'checked' : '' }}>
+
+            <label for="remember" class="ml-2 text-gray-700 text-sm">
+                Remember Me
+            </label>
+        </div> --}}
+
+        {{-- BUTTON --}}
+        <button type="submit"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg mt-2 font-medium transition">
+            Login
+        </button>
+    </form>
+
+    
 @endsection

@@ -1,106 +1,134 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Dashboard')</title>
 
-    <title>@yield('title')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
-    <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
-<body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+<body class="flex bg-gray-100">
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
+{{-- SIDEBAR --}}
+<aside class="w-64 bg-white h-screen fixed left-0 top-0 px-3 py-6 shadow-sm overflow-hidden">
 
-                    </ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->FingerPrintID }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <main class="py-4">
-            @yield('content')
-        </main>
+    {{-- LOGO --}}
+    <div class="flex items-center gap-3 px-2 mb-8">
+        <div class="bg-blue-500 text-white w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold">
+            S
+        </div>
+        <span class="text-lg font-semibold text-gray-800">Santosa Hospital</span>
     </div>
-<script>
-document.getElementById('FingerprintID').addEventListener('input', function () {
-    let input = this.value;
-    let errorMsg = document.getElementById('fp-error');
 
-    // Jika mengandung huruf atau karakter selain angka
-    if (/[^0-9]/.test(input)) {
-        errorMsg.style.display = "block";
-        errorMsg.textContent = "Fingerprint ID hanya boleh angka.";
-    } else {
-        errorMsg.style.display = "none";
-        errorMsg.textContent = "";
-    }
+    @php
+        function active($path) {
+            return request()->is($path)
+                ? 'bg-blue-100 text-blue-600 font-semibold'
+                : 'text-gray-700';
+        }
+    @endphp
 
-    // Bersihkan otomatis karakter non-angka
-    this.value = input.replace(/[^0-9]/g, "");
-});
-</script>
+    {{-- NAV WRAPPER --}}
+    <nav class="flex flex-col justify-between h-[calc(100vh-100px)]">
+
+        {{-- MENU ATAS --}}
+        <div class="space-y-1">
+
+            <a href="/home"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {{ active('home') }}">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                Dashboard
+            </a>
+
+            <a href="/pegawai"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {{ active('pegawai') }}">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                Pegawai
+            </a>
+
+            <a href="/pasien"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {{ active('pasien*') }}">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                Data Pasien
+            </a>
+
+            <a href="/diagnosa"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {{ active('diagnosa*') }}">
+                <i data-lucide="stethoscope" class="w-5 h-5"></i>
+                Pemeriksaan / Diagnosa
+            </a>
+
+        </div>
+
+        {{-- AVATAR + DROPDOWN --}}
+        <div class="relative mt-4">
+
+            {{-- BUTTON --}}
+            <button id="userMenuBtn"
+                class="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 transition ">
+
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0D8ABC&color=fff"
+                    class="w-10 h-10 rounded-full">
+
+                <div class="flex flex-col text-left">
+                    <span class="text-sm text-gray-800">{{ Auth::user()->employee?->EmployeeName }}</span>
+                    <span class="text-sm text-gray-500">{{ Auth::user()->FingerPrintID }}</span>
+                </div>
+
+                <i data-lucide="chevron-down" class="ml-auto w-5 h-5 text-gray-600"></i>
+            </button>
+
+            {{-- DROPDOWN --}}
+            <div id="userDropdown"
+                class="hidden absolute bottom-14 left-0 w-full bg-gray-50 shadow-lg rounded-xl overflow-hidden ">
+
+                <a href="/profile"
+                    class="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 text-gray-700 transition disabled">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                    Profile
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                        class="w-full text-left flex items-center gap-3 px-4 py-2 hover:bg-red-50 text-red-600 transition">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+</aside>
 
 
+    {{-- CONTENT --}}
+    <main class="ml-64 w-full p-8">
+        @yield('content')
+    </main>
+
+    <script> lucide.createIcons(); </script>
+    <script>
+    const btn = document.getElementById("userMenuBtn");
+    const menu = document.getElementById("userDropdown");
+
+    btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add("hidden");
+        }
+    });
+
+    lucide.createIcons();
+    </script>
 
 </body>
 
