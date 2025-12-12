@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IGDController;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])
     ->middleware('auth');
@@ -13,10 +14,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index']);
     
+    Route::get('/pegawai', function () {
+        return view('pegawai');
+    });
 });
-Route::get('/pegawai', function () {
-    return view('pegawai');
-});
+
+
 
 
 // Route::get('/auth-test', function () {

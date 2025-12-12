@@ -75,8 +75,8 @@
                     class="w-10 h-10 rounded-full">
 
                 <div class="flex flex-col text-left">
-                    <span class="text-sm text-gray-800">{{ Auth::user()->employee?->EmployeeName }}</span>
-                    <span class="text-sm text-gray-500">{{ Auth::user()->FingerPrintID }}</span>
+                    <span class="text-xs text-gray-800">{{ Auth::user()->employee?->EmployeeName }}</span>
+                    <span class="text-xs text-gray-500">{{ Auth::user()->FingerPrintID }}</span>
                 </div>
 
                 <i data-lucide="chevron-down" class="ml-auto w-5 h-5 text-gray-600"></i>
@@ -84,7 +84,7 @@
 
             {{-- DROPDOWN --}}
             <div id="userDropdown"
-                class="hidden absolute bottom-14 left-0 w-full bg-gray-50 shadow-lg rounded-xl overflow-hidden ">
+                class="hidden absolute bottom-14 left-0 w-full bg-gray-50 shadow-xl rounded-xl overflow-hidden ">
 
                 <a href="/profile"
                     class="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 text-gray-700 transition disabled">
