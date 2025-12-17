@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>@yield('title', 'Dashboard')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -50,10 +51,10 @@
                 Pegawai
             </a>
 
-            <a href="/pasien"
-                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {{ active('pasien*') }}">
+            <a href="/skl"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition {{ active('skl') }}">
                 <i data-lucide="users" class="w-5 h-5"></i>
-                Data Pasien
+                Surat Keterangan Lahir
             </a>
 
             <a href="/diagnosa"
@@ -113,22 +114,145 @@
     </main>
 
     <script> lucide.createIcons(); </script>
-    <script>
-    const btn = document.getElementById("userMenuBtn");
-    const menu = document.getElementById("userDropdown");
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-    btn.addEventListener("click", () => {
-        menu.classList.toggle("hidden");
-    });
+    /* =============================
+       ICON
+    ============================= */
+    if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+    }
 
-    document.addEventListener("click", (e) => {
-        if (!btn.contains(e.target) && !menu.contains(e.target)) {
-            menu.classList.add("hidden");
+    /* =============================
+       USER DROPDOWN
+    ============================= */
+    const userBtn = document.getElementById("userMenuBtn");
+    const userMenu = document.getElementById("userDropdown");
+
+    if (userBtn && userMenu) {
+        userBtn.addEventListener("click", e => {
+            e.stopPropagation();
+            userMenu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", e => {
+            if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add("hidden");
+            }
+        });
+    }
+
+    /* =============================
+       VALIDASI NO RM + FETCH DATA IBU
+    ============================= */
+    const rmInput = document.getElementById('no_rm');
+    const rmError = document.getElementById('rm_error');
+
+    if (rmInput && rmError) {
+
+        // hanya angka
+        rmInput.addEventListener('input', () => {
+            rmInput.value = rmInput.value.replace(/\D/g, '');
+
+            if (rmInput.value && rmInput.value.length !== 6) {
+                rmInput.classList.add('border-red-500');
+                rmError.classList.remove('hidden');
+            } else {
+                rmInput.classList.remove('border-red-500');
+                rmError.classList.add('hidden');
+            }
+        });
+
+        // ENTER ambil data ibu
+        rmInput.addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return;
+
+            e.preventDefault();
+
+            if (rmInput.value.length !== 6) {
+                rmInput.classList.add('border-red-500');
+                rmError.classList.remove('hidden');
+                return;
+            }
+
+            fetch(`/api/pasien/${rmInput.value}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data || data.error) {
+                        alert('Data tidak ditemukan');
+                        return;
+                    }
+
+                    document.querySelector('[name="nama_ibu"]').value = data.NamaIbu ?? '';
+                    document.querySelector('[name="nik_ibu"]').value = data.NIK ?? '';
+                    document.querySelector('[name="alamat_ibu"]').value = data.Alamat ?? '';
+                    document.querySelector('[name="alamat_ayah"]').value = data.Alamat ?? '';
+                    document.querySelector('[name="pekerjaan_ibu"]').value = data.Pekerjaan ?? '';
+                    document.querySelector('[name="goldar_ibu"]').value = data.GolDar ?? '';
+                })
+                .catch(() => alert('Gagal mengambil data pasien'));
+        });
+    }
+
+    /* =============================
+       AUTO HARI DARI TANGGAL
+    ============================= */
+    const tglLahir  = document.getElementById('tgl_lahir');
+    const hariLahir = document.getElementById('hari_lahir');
+    const hariMap  = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+    if (tglLahir && hariLahir) {
+        tglLahir.addEventListener('change', () => {
+            const d = new Date(tglLahir.value);
+            if (!isNaN(d)) {
+                hariLahir.value = hariMap[d.getDay()];
+            }
+        });
+    }
+
+    /* =============================
+       PREVIEW & PRINT PDF (DOMPDF)
+    ============================= */
+    const previewBtn = document.getElementById('previewBtn');
+    const printBtn   = document.getElementById('printBtn');
+    const saveBtn    = document.getElementById('saveBtn');
+    const form       = document.getElementById('sklForm');
+
+    function submitPdf(url) {
+        if (!form) {
+            alert('Form tidak ditemukan');
+            return;
         }
+
+        form.action = url;
+        form.method = 'POST';
+        form.target = '_blank';
+        form.submit();
+    }
+
+    previewBtn?.addEventListener('click', () => submitPdf('/skl/preview'));
+    printBtn?.addEventListener('click', () => submitPdf('/skl/print'));
+
+    saveBtn?.addEventListener('click', () => {
+        alert('Simpan logic belum diimplementasikan 😄');
     });
 
-    lucide.createIcons();
-    </script>
+});
+
+
+    /* =============================
+       QRCODE
+    ============================= */
+document.querySelector('[name="dokter_fingerprint"]')
+?.addEventListener('change', function () {
+    const opt = this.options[this.selectedIndex];
+    document.querySelector('[name="nama_dokter"]').value = opt.dataset.nama || '';
+    document.querySelector('[name="no_sip"]').value = opt.dataset.sip || '';
+});
+</script>
+
+
 
 </body>
 

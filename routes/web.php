@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\IGDController;
+use App\Http\Controllers\PasienController;
+use App\Http\Controllers\SKLController;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])
     ->middleware('auth');
@@ -17,7 +18,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/pegawai', function () {
         return view('pegawai');
     });
+    
+    Route::get('/skl', [SKLController::class, 'index']);
+
+    Route::get('/api/pasien/{rm}', [PasienController::class, 'getByRM']);
+    Route::post('/skl/preview', [SklController::class, 'preview']);
+    Route::post('/skl/print', [SklController::class, 'print']);
+
+
+
+
 });
+
 
 
 
