@@ -125,21 +125,26 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =============================
        USER DROPDOWN
     ============================= */
-    const userBtn = document.getElementById("userMenuBtn");
-    const userMenu = document.getElementById("userDropdown");
+function initUserDropdown() {
+    const btn  = document.getElementById('userMenuBtn');
+    const menu = document.getElementById('userDropdown');
 
-    if (userBtn && userMenu) {
-        userBtn.addEventListener("click", e => {
-            e.stopPropagation();
-            userMenu.classList.toggle("hidden");
-        });
+    if (!btn || !menu) return;
 
-        document.addEventListener("click", e => {
-            if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
-                userMenu.classList.add("hidden");
-            }
-        });
-    }
+    btn.onclick = e => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+    };
+
+    document.onclick = e => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    };
+}
+
+document.addEventListener('DOMContentLoaded', initUserDropdown);
+document.addEventListener('livewire:navigated', initUserDropdown);
 
     /* =============================
        VALIDASI NO RM + FETCH DATA IBU
