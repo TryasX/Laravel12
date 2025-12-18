@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\SKLController;
+use App\Livewire\InpatientTable;
+
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])
     ->middleware('auth');
@@ -15,9 +17,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index']);
     
-    Route::get('/pegawai', function () {
-        return view('pegawai');
-    });
+Route::get('/inpatient', function () {
+    return view('inpatient.index');
+})->name('inpatient');
+
     
     Route::get('/skl', [SKLController::class, 'index']);
 
